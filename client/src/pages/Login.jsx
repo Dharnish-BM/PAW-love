@@ -1,31 +1,39 @@
-import { Box, Button, TextField, Typography } from '@mui/material';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "../api/axios";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Login() {
-  const { login } = useAuth();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
+  const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
 
-  const submit = async (e) => {
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async e => {
     e.preventDefault();
     try {
-      await login(form.email, form.password);
-      navigate('/');
-    } catch (err) { setError(err?.response?.data?.message || 'Login failed'); }
+      const res = await axios.post("/auth/login", form);
+      setUser(res.data);
+      navigate("/browse");
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed");
+    }
   };
 
   return (
-    <Box sx={{ maxWidth: 480, mx: 'auto', mt: 4 }}>
-      <Typography variant="h5" gutterBottom>Login</Typography>
-      <Box component="form" onSubmit={submit} sx={{ display: 'grid', gap: 2 }}>
-        <TextField label="Email" value={form.email} onChange={(e)=>setForm({...form, email:e.target.value})} />
-        <TextField label="Password" type="password" value={form.password} onChange={(e)=>setForm({...form, password:e.target.value})} />
-        {error && <Typography color="error">{error}</Typography>}
-        <Button type="submit" variant="contained">Login</Button>
-      </Box>
-    </Box>
+    <div className="container">
+      <h2>Login</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <input name="email" placeholder="Email" type="email" onChange={handleChange} required />
+        <input name="password" placeholder="Password" type="password" onChange={handleChange} required />
+        <button type="submit">Login</button>
+      </form>
+    </div>
   );
 }

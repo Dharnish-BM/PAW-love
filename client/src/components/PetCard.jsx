@@ -1,17 +1,29 @@
-import { Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 export default function PetCard({ pet }) {
-  const image = pet.images?.[0] || 'https://images.unsplash.com/photo-1517849845537-4d257902454a';
+  const navigate = useNavigate();
+
   return (
-    <Card>
-      <CardActionArea component={Link} to={`/pets/${pet._id}`}>
-        <CardMedia component="img" height="160" image={image} alt={pet.name} />
-        <CardContent>
-          <Typography variant="h6">{pet.name}</Typography>
-          <Typography variant="body2" color="text.secondary">{pet.breed || pet.species} • {pet.age}</Typography>
-        </CardContent>
-      </CardActionArea>
-    </Card>
+    <div
+      onClick={() => navigate(`/pets/${pet._id}`)}
+      style={{
+        border: "1px solid #ccc",
+        borderRadius: "10px",
+        padding: "10px",
+        margin: "10px",
+        cursor: "pointer",
+        width: "200px",
+      }}
+    >
+      <img
+        src={pet.images[0] || "https://via.placeholder.com/150"}
+        alt={pet.name}
+        style={{ width: "100%", borderRadius: "10px" }}
+      />
+      <h3>{pet.name}</h3>
+      <p>{pet.breed}</p>
+      <p>{pet.age} years | {pet.gender}</p>
+      <p>{pet.description?.slice(0, 50)}...</p>
+    </div>
   );
 }

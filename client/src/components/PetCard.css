@@ -1,0 +1,452 @@
+.pet-card {
+  background: var(--white);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.pet-card:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+/* Image Container */
+.pet-image-container {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+}
+
+.pet-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pet-card:hover .pet-image {
+  transform: scale(1.1);
+}
+
+/* Hover Overlay */
+.pet-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 53, 0.9) 0%,
+    rgba(255, 142, 158, 0.9) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+}
+
+.overlay-content {
+  text-align: center;
+  padding: 20px;
+  width: 100%;
+}
+
+.overlay-text h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.overlay-text p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  opacity: 0.9;
+}
+
+.overlay-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 20px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.quick-view-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--white);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.quick-view-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.adopt-btn {
+  background: var(--white);
+  color: var(--primary-orange);
+  border: 2px solid var(--white);
+}
+
+.adopt-btn:hover {
+  background: var(--primary-orange);
+  color: var(--white);
+  transform: translateY(-2px);
+}
+
+/* Favorite Button */
+.favorite-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: #ccc;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.favorite-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+}
+
+.favorite-btn.favorited {
+  color: #ff4757;
+  background: rgba(255, 255, 255, 1);
+}
+
+/* Species Badge */
+.species-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--primary-orange);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.species-icon {
+  color: var(--primary-orange);
+}
+
+/* Card Content */
+.pet-content {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.pet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.pet-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--dark-gray);
+  margin: 0;
+}
+
+.pet-gender {
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+.pet-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.pet-breed,
+.pet-age,
+.pet-size {
+  background: rgba(255, 107, 53, 0.1);
+  color: var(--primary-orange);
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.pet-location {
+  color: var(--warm-brown);
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-top: auto;
+}
+
+/* Card Footer */
+.pet-footer {
+  padding: 0 20px 20px;
+  margin-top: auto;
+}
+
+.view-details-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--border-radius-small);
+  background: linear-gradient(135deg, var(--primary-orange), var(--primary-orange-light));
+  color: var(--white);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.view-details-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background: var(--white);
+  border-radius: var(--border-radius);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 24px 0;
+  border-bottom: 1px solid var(--light-gray);
+  margin-bottom: 24px;
+}
+
+.modal-header h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--dark-gray);
+  margin: 0;
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--light-gray);
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+  background: var(--primary-orange);
+  color: var(--white);
+}
+
+.modal-body {
+  padding: 0 24px;
+}
+
+.modal-image {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.modal-image img {
+  width: 100%;
+  max-width: 300px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: var(--border-radius-small);
+  box-shadow: var(--shadow);
+}
+
+.modal-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.info-label {
+  font-weight: 600;
+  color: var(--dark-gray);
+  min-width: 80px;
+}
+
+.info-value {
+  color: var(--warm-brown);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-description h4 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--dark-gray);
+  margin-bottom: 12px;
+}
+
+.modal-description p {
+  color: var(--warm-brown);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  padding: 24px;
+  border-top: 1px solid var(--light-gray);
+  margin-top: 24px;
+}
+
+.modal-footer .btn {
+  padding: 12px 24px;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .pet-image-container {
+    height: 200px;
+  }
+  
+  .overlay-actions {
+    flex-direction: column;
+  }
+  
+  .action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .modal-content {
+    margin: 20px;
+    max-height: calc(100vh - 40px);
+  }
+  
+  .modal-header {
+    padding: 20px 20px 0;
+  }
+  
+  .modal-body {
+    padding: 0 20px;
+  }
+  
+  .modal-footer {
+    padding: 20px;
+    flex-direction: column;
+  }
+  
+  .modal-footer .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .pet-content {
+    padding: 16px;
+  }
+  
+  .pet-footer {
+    padding: 0 16px 16px;
+  }
+  
+  .pet-name {
+    font-size: 1.2rem;
+  }
+  
+  .pet-details {
+    gap: 6px;
+  }
+  
+  .pet-breed,
+  .pet-age,
+  .pet-size {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+  }
+}

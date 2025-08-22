@@ -1,6 +1,5 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 
 export default function Signup() {
@@ -14,7 +13,7 @@ export default function Signup() {
     isShelter: false,
   });
   const [error, setError] = useState("");
-  const { setUser } = useContext(AuthContext);
+  const { signup } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleChange = e => {
@@ -32,10 +31,11 @@ export default function Signup() {
       return;
     }
     try {
-      const res = await axios.post("/auth/signup", form);
-      setUser(res.data);
+      const res = await signup(form);
+      // The signup response includes user data directly
       navigate("/browse");
     } catch (err) {
+      console.error("Signup error:", err);
       setError(err.response?.data?.message || "Signup failed");
     }
   };

@@ -63,6 +63,15 @@ export const login = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get current user
+// @route   GET /api/auth/me
+// @access  Private
+export const getMe = asyncHandler(async (req, res) => {
+  // For now, return null since we don't have auth middleware yet
+  // This will be updated when we implement JWT verification
+  res.json(null);
+});
+
 // @desc    Logout user
 // @route   POST /api/auth/logout
 // @access  Public

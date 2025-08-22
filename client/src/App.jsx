@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import './App.css';
 import Header from './components/Header.jsx';
 import BrowsePets from './pages/BrowsePets.jsx';
 import Dashboard from './pages/Dashboard.jsx';
@@ -11,9 +12,9 @@ import Signup from './pages/Signup.jsx';
 export default function App() {
   const [query, setQuery] = useState('');
   return (
-    <div>
+    <div className="app">
       <Header onSearch={setQuery} />
-      <main style={{ maxWidth: 1200, margin: '24px auto', padding: '0 16px' }}>
+      <main className="main-content">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/browse" element={<BrowsePets globalQuery={query} />} />

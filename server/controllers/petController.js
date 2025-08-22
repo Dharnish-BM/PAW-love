@@ -6,6 +6,7 @@ import Pet from "../models/Pet.js";
 // @access  Public
 export const getPets = asyncHandler(async (req, res) => {
   const pets = await Pet.find({ isAdopted: false });
+  console.log('Returning pets:', pets.map(p => ({ id: p._id, name: p.name, images: p.images })));
   res.json(pets);
 });
 
@@ -13,10 +14,12 @@ export const getPets = asyncHandler(async (req, res) => {
 // @route   POST /api/pets/add
 // @access  Shelter only
 export const addPet = asyncHandler(async (req, res) => {
+  console.log('Received pet data:', req.body);
   const pet = await Pet.create({
     ...req.body,
     postedBy: req.user._id,
   });
+  console.log('Created pet:', pet);
   res.status(201).json(pet);
 });
 

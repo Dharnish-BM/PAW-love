@@ -14,6 +14,10 @@ export default function PetCard({ pet }) {
   console.log('PetCard received pet:', pet);
   console.log('Pet images field:', pet.images);
   console.log('Pet imageUrls field:', pet.imageUrls);
+  console.log('Pet imageUrls type:', typeof pet.imageUrls);
+  console.log('Pet images type:', typeof pet.images);
+  console.log('Pet imageUrls length:', pet.imageUrls?.length);
+  console.log('Pet images length:', pet.images?.length);
 
   const handleFavorite = (e) => {
     e.stopPropagation();
@@ -63,9 +67,17 @@ export default function PetCard({ pet }) {
         {/* Card Image Container */}
         <div className="pet-image-container">
           <img
-            src={pet.images?.[0] || "https://images.unsplash.com/photo-1450778869180-41d0601e046e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"}
+            src={pet.images?.[0] || pet.imageUrls?.[0] || "https://images.unsplash.com/photo-1450778869180-41d0601e046e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"}
             alt={pet.name}
             className="pet-image"
+            onError={(e) => {
+              console.log('Image failed to load, using fallback');
+              console.log('Failed image URL:', e.target.src);
+              e.target.src = "https://images.unsplash.com/photo-1450778869180-41d0601e046e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80";
+            }}
+            onLoad={(e) => {
+              console.log('Image loaded successfully:', e.target.src);
+            }}
           />
           
           {/* Hover Overlay */}
@@ -197,8 +209,16 @@ export default function PetCard({ pet }) {
               <div className="modal-body">
                 <div className="modal-image">
                   <img
-                    src={pet.images?.[0] || "https://images.unsplash.com/photo-1450778869180-41d0601e046e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"}
+                    src={pet.images?.[0] || pet.imageUrls?.[0] || "https://images.unsplash.com/photo-1450778869180-41d0601e046e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"}
                     alt={pet.name}
+                    onError={(e) => {
+                      console.log('Modal image failed to load, using fallback');
+                      console.log('Failed modal image URL:', e.target.src);
+                      e.target.src = "https://images.unsplash.com/photo-1450778869180-41d0601e046e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80";
+                    }}
+                    onLoad={(e) => {
+                      console.log('Modal image loaded successfully:', e.target.src);
+                    }}
                   />
                 </div>
                 

@@ -40,8 +40,10 @@ function DashboardInner() {
     location: '',
     description: '',
     medicalHistory: '',
-    images: [] // Fixed: use 'images' to match Pet model
+    images: []
   });
+  
+  console.log('Initial form state:', form);
   const [imageFiles, setImageFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
 
@@ -55,6 +57,14 @@ function DashboardInner() {
       ]);
       console.log('Pets response:', p.data);
       console.log('Applications response:', a.data);
+      
+      // Check if pets have images
+      if (p.data && p.data.length > 0) {
+        p.data.forEach((pet, index) => {
+          console.log(`Pet ${index}:`, pet.name, 'Images:', pet.images, 'ImageUrls:', pet.imageUrls);
+        });
+      }
+      
       setPets(p.data);
       setApps(a.data);
     } catch (err) {
@@ -65,15 +75,33 @@ function DashboardInner() {
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { 
+    console.log('Dashboard component mounted');
+    load(); 
+  }, []);
+  
+  useEffect(() => {
+    console.log('Form state changed:', form);
+  }, [form]);
+  
+  useEffect(() => {
+    console.log('Image files changed:', imageFiles);
+  }, [imageFiles]);
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
+    console.log('Selected files:', files);
+    console.log('Files length:', files.length);
     setImageFiles(prev => [...prev, ...files]);
   };
 
   const removeImage = (index) => {
-    setImageFiles(prev => prev.filter((_, i) => i !== index));
+    console.log('Removing image at index:', index);
+    setImageFiles(prev => {
+      const newFiles = prev.filter((_, i) => i !== index);
+      console.log('New files array:', newFiles);
+      return newFiles;
+    });
   };
 
   const uploadImages = async () => {
@@ -81,10 +109,19 @@ function DashboardInner() {
     
     setUploading(true);
     try {
-      // For now, we'll use placeholder URLs. In production, you'd upload to a service like Cloudinary
+      // Use working Unsplash pet images
+      const petImages = [
+        'https://images.unsplash.com/photo-1450778869180-41d0601e046e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+        'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+        'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+        'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+        'https://images.unsplash.com/photo-1507146426996-ef05306b0a2e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+      ];
+      
       const uploadedUrls = imageFiles.map((_, index) => 
-        `https://images.unsplash.com/photo-${1450778869180 + index}?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80`
+        petImages[index % petImages.length]
       );
+      console.log('Generated image URLs:', uploadedUrls);
       setUploading(false);
       return uploadedUrls;
     } catch (error) {
@@ -101,10 +138,13 @@ function DashboardInner() {
       const imageUrls = await uploadImages();
       const payload = { 
         ...form, 
-        images: [...form.images, ...imageUrls],
+        images: [...(form.images || []), ...imageUrls],
         age: parseFloat(form.age) || 0
       };
       
+      console.log('Form images:', form.images);
+      console.log('New image URLs:', imageUrls);
+      console.log('Combined images:', payload.images);
       console.log('Sending payload:', payload);
       
       if (editingPet) {
@@ -116,12 +156,20 @@ function DashboardInner() {
       }
       
       setForm({
-        name: '', species: 'dog', breed: '', age: '', gender: 'unknown',
-        size: 'medium', location: '', description: '', medicalHistory: '', images: []
+        name: '', 
+        species: 'dog', 
+        breed: '', 
+        age: '', 
+        gender: 'unknown',
+        size: 'medium', 
+        location: '', 
+        description: '', 
+        medicalHistory: '', 
+        images: []
       });
       setImageFiles([]);
       setShowAddForm(false);
-      await load();
+    await load();
     } catch (error) {
       console.error('Error saving pet:', error);
       console.error('Error details:', error.response?.data);
@@ -130,6 +178,10 @@ function DashboardInner() {
   };
 
   const editPet = (pet) => {
+    console.log('Editing pet:', pet);
+    console.log('Pet images:', pet.images);
+    console.log('Pet imageUrls:', pet.imageUrls);
+    
     setEditingPet(pet);
     setForm({
       name: pet.name || '',
@@ -141,7 +193,7 @@ function DashboardInner() {
       location: pet.location || '',
       description: pet.description || '',
       medicalHistory: pet.medicalHistory || '',
-      images: pet.images || [] // Fixed: use 'images' field
+      images: pet.images || pet.imageUrls || []
     });
     setShowAddForm(true);
   };
@@ -303,8 +355,16 @@ function DashboardInner() {
                       setShowAddForm(false);
                       setEditingPet(null);
                       setForm({
-                        name: '', species: 'dog', breed: '', age: '', gender: 'unknown',
-                        size: 'medium', location: '', description: '', medicalHistory: '', images: []
+                        name: '', 
+                        species: 'dog', 
+                        breed: '', 
+                        age: '', 
+                        gender: 'unknown',
+                        size: 'medium', 
+                        location: '', 
+                        description: '', 
+                        medicalHistory: '', 
+                        images: []
                       });
                       setImageFiles([]);
                     }}
@@ -428,6 +488,8 @@ function DashboardInner() {
                           accept="image/*"
                           onChange={handleImageUpload}
                           className="file-input"
+                          onClick={(e) => e.target.value = null} // Reset file input
+                          style={{ cursor: 'pointer' }}
                         />
                       </div>
                       
@@ -440,7 +502,15 @@ function DashboardInner() {
                               <div key={index} className="image-preview">
                                 <img 
                                   src={URL.createObjectURL(file)} 
-                                  alt={`Preview ${index + 1}`} 
+                                  alt={`Preview ${index + 1}`}
+                                  onError={(e) => {
+                                    console.log('Preview image failed to load');
+                                    console.log('Failed preview image URL:', e.target.src);
+                                    e.target.style.display = 'none';
+                                  }}
+                                  onLoad={(e) => {
+                                    console.log('Preview image loaded successfully:', e.target.src);
+                                  }}
                                 />
                                 <button
                                   type="button"
@@ -456,13 +526,24 @@ function DashboardInner() {
                       )}
 
                       {/* Existing Images */}
-                      {form.images.length > 0 && (
+                      {(form.images && form.images.length > 0) && (
                         <div className="existing-images">
                           <h4>Existing Images ({form.images.length})</h4>
                           <div className="preview-grid">
                             {form.images.map((url, index) => (
                               <div key={index} className="image-preview existing">
-                                <img src={url} alt={`Pet ${index + 1}`} />
+                                <img 
+                                  src={url} 
+                                  alt={`Pet ${index + 1}`}
+                                  onError={(e) => {
+                                    console.log('Form image failed to load:', url);
+                                    console.log('Failed form image URL:', e.target.src);
+                                    e.target.style.display = 'none';
+                                  }}
+                                  onLoad={(e) => {
+                                    console.log('Form image loaded successfully:', e.target.src);
+                                  }}
+                                />
                                 <button
                                   type="button"
                                   className="remove-image"
@@ -489,8 +570,16 @@ function DashboardInner() {
                         setShowAddForm(false);
                         setEditingPet(null);
                         setForm({
-                          name: '', species: 'dog', breed: '', age: '', gender: 'unknown',
-                          size: 'medium', location: '', description: '', medicalHistory: '', images: []
+                          name: '', 
+                          species: 'dog', 
+                          breed: '', 
+                          age: '', 
+                          gender: 'unknown',
+                          size: 'medium', 
+                          location: '', 
+                          description: '', 
+                          medicalHistory: '', 
+                          images: []
                         });
                         setImageFiles([]);
                       }}
@@ -550,13 +639,24 @@ function DashboardInner() {
                     transition={{ duration: 0.3 }}
                   >
                     <div className="pet-image">
-                      {pet.images && pet.images.length > 0 ? (
-                        <img src={pet.images[0]} alt={pet.name} />
-                      ) : (
-                        <div className="no-image">
-                          {getSpeciesIcon(pet.species)}
-                        </div>
-                      )}
+                      {(pet.images && pet.images.length > 0) || (pet.imageUrls && pet.imageUrls.length > 0) ? (
+                        <img 
+                          src={pet.images?.[0] || pet.imageUrls?.[0]} 
+                          alt={pet.name}
+                          onError={(e) => {
+                            console.log('Dashboard image failed to load, using fallback');
+                            console.log('Failed dashboard image URL:', e.target.src);
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'flex';
+                          }}
+                          onLoad={(e) => {
+                            console.log('Dashboard image loaded successfully:', e.target.src);
+                          }}
+                        />
+                      ) : null}
+                      <div className="no-image" style={{ display: (pet.images && pet.images.length > 0) || (pet.imageUrls && pet.imageUrls.length > 0) ? 'none' : 'flex' }}>
+                        {getSpeciesIcon(pet.species)}
+                      </div>
                       {pet.isAdopted && <div className="adopted-badge">Adopted</div>}
                     </div>
                     

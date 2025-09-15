@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import GoogleSignIn from "../components/GoogleSignIn";
 import { AuthContext } from "../context/AuthContext";
 import "./Auth.css";
 
@@ -45,6 +46,14 @@ export default function Signup() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = (result) => {
+    navigate("/browse");
+  };
+
+  const handleGoogleError = (error) => {
+    setError("Google Sign-In failed. Please try again.");
   };
 
   return (
@@ -222,6 +231,18 @@ export default function Signup() {
               )}
             </button>
           </form>
+
+          {/* Divider */}
+          <div className="auth-divider">
+            <span className="divider-text">or</span>
+          </div>
+
+          {/* Google Sign-In */}
+          <GoogleSignIn
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            text="Sign up with Google"
+          />
 
           {/* Footer */}
           <div className="auth-footer">

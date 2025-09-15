@@ -377,6 +377,33 @@
   to { transform: rotate(360deg); }
 }
 
+/* Divider */
+.auth-divider {
+  position: relative;
+  text-align: center;
+  margin: 24px 0;
+}
+
+.auth-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--light-gray), transparent);
+}
+
+.divider-text {
+  background: var(--white);
+  padding: 0 16px;
+  color: var(--warm-brown);
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+}
+
 /* Error Message */
 .message.error {
   background: rgba(244, 67, 54, 0.1);

@@ -3,78 +3,88 @@
   width: 100%;
   display: flex;
   justify-content: center;
+  margin: 16px 0;
 }
 
-.google-signin-button {
+.google-signin-merged {
+  position: relative;
   width: 100%;
-  max-width: 100%;
+  max-width: 520px;
+  height: 48px;
 }
 
-/* Custom Google Sign-In Button Styling */
-.google-signin-button iframe {
-  width: 100% !important;
-  height: 48px !important;
-  border-radius: var(--border-radius-small) !important;
-  border: 2px solid #dadce0 !important;
-  transition: all 0.3s ease !important;
-}
-
-.google-signin-button iframe:hover {
-  border-color: #4285f4 !important;
-  box-shadow: 0 2px 8px rgba(66, 133, 244, 0.1) !important;
-  transform: translateY(-1px) !important;
-}
-
-/* Fallback button styles */
-.google-signin-btn {
+.google-styled-mask {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #dadce0;
+  border: 2px solid var(--light-gray);
   border-radius: var(--border-radius-small);
   background: var(--white);
-  color: #3c4043;
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
+  color: var(--dark-gray);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
   font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  pointer-events: none; /* visual only; clicks go to iframe layer */
 }
 
-.google-signin-btn:hover {
-  border-color: #4285f4;
-  background: #f8f9fa;
+.google-styled-mask::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.google-signin-merged:hover .google-styled-mask {
+  border-color: var(--primary-orange);
+  background: var(--soft-cream);
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(66, 133, 244, 0.1);
+  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.15);
 }
 
-.google-signin-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 1px 4px rgba(66, 133, 244, 0.1);
+.google-signin-merged:hover .google-styled-mask::before {
+  left: 100%;
 }
 
-.google-signin-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
+.google-signin-iframe-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;          /* on top to receive clicks */
+  opacity: 0;          /* completely invisible */
 }
 
-.google-icon {
-  flex-shrink: 0;
+.google-signin-iframe-layer * {
+  opacity: 0 !important; /* hide internal elements too (div/iframe) */
 }
 
-.google-signin-btn .loading-spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid #dadce0;
-  border-radius: 50%;
-  border-top-color: #4285f4;
-  animation: spin 1s ease-in-out infinite;
+/* Theme the official Google iframe button */
+.google-signin-button iframe {
+  width: 100% !important;
+  height: 48px !important;
+  border-radius: var(--border-radius-small) !important;
+  border: 2px solid var(--light-gray) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background: var(--white) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+.google-signin-button iframe:hover {
+  border-color: var(--primary-orange) !important;
+  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.15) !important;
+  transform: translateY(-2px) !important;
+}
+
+.google-signin-button iframe:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.1) !important;
 }
 
 @keyframes spin {
@@ -83,17 +93,13 @@
 
 /* Responsive adjustments */
 @media (max-width: 480px) {
-  .google-signin-button iframe {
-    height: 44px !important;
+  .google-signin-container {
+    margin: 12px 0;
   }
-  
-  .google-signin-btn {
-    padding: 10px 14px;
-    font-size: 13px;
-  }
-  
-  .google-icon {
-    width: 18px;
-    height: 18px;
-  }
+  .google-signin-merged { height: 44px; }
+}
+/* Focus states for accessibility */
+.google-signin-merged:focus-within .google-styled-mask {
+  outline: 2px solid var(--primary-orange);
+  outline-offset: 2px;
 }

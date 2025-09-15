@@ -12,7 +12,9 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: function() {
+      return !this.isGoogleUser;
+    },
   },
   phone: {
     type: String,
@@ -20,9 +22,16 @@ const userSchema = new mongoose.Schema({
   address: {
     type: String,
   },
+  picture: {
+    type: String,
+  },
   isShelter: {
     type: Boolean,
     default: false, // Only super-admin sets true manually
+  },
+  isGoogleUser: {
+    type: Boolean,
+    default: false,
   },
 }, { timestamps: true });
 

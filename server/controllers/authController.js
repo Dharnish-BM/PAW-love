@@ -1,7 +1,10 @@
 import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
+import { OAuth2Client } from "google-auth-library";
 import User from "../models/User.js";
 import generateToken from "../utils/generateToken.js";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // @desc    Signup new user
 // @route   POST /api/auth/signup
@@ -70,6 +73,62 @@ export const getMe = asyncHandler(async (req, res) => {
   // For now, return null since we don't have auth middleware yet
   // This will be updated when we implement JWT verification
   res.json(null);
+});
+
+// @desc    Google OAuth login/signup
+// @route   POST /api/auth/google
+// @access  Public
+export const googleAuth = asyncHandler(async (req, res) => {
+  const { token } = req.body;
+
+  try {
+    // Verify the Google token
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, picture } = payload;
+
+    // Check if user already exists
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // User exists, log them in
+      generateToken(res, user._id);
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isShelter: user.isShelter,
+        picture: user.picture || picture,
+      });
+    } else {
+      // Create new user
+      user = await User.create({
+        name,
+        email,
+        password: '', // No password for Google users
+        picture,
+        isShelter: false,
+        isGoogleUser: true,
+      });
+
+      generateToken(res, user._id);
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isShelter: user.isShelter,
+        picture: user.picture,
+      });
+    }
+  } catch (error) {
+    console.error('Google Auth Error:', error);
+    res.status(400);
+    throw new Error("Invalid Google token");
+  }
 });
 
 // @desc    Logout user

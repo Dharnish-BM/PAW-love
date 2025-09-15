@@ -1,12 +1,13 @@
 import express from "express";
-import { addPet, getPets, markAdopted, updatePet } from "../controllers/petController.js";
+import { addPet, getPetById, getPets, markAdopted, updatePet } from "../controllers/petController.js";
 import { protect, shelterOnly } from "../middleware/authMiddleware.js";
 import Pet from "../models/Pet.js";
 
 const router = express.Router();
 
-// Public route: anyone can browse pets
+// Public routes: anyone can browse pets
 router.get("/", getPets);
+router.get("/:id", getPetById);
 
 // Protected routes: only logged-in shelters can manage pets
 router.post("/add", protect, shelterOnly, addPet);

@@ -172,6 +172,10 @@
   box-shadow: var(--shadow);
   transition: all 0.3s ease;
   border: 2px solid transparent;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
 }
 
 .pet-card:hover {
@@ -184,10 +188,200 @@
   border-color: var(--warm-brown);
 }
 
+.pet-card.dashboard-card {
+  background: var(--white);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  min-height: 480px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 107, 53, 0.1);
+}
+
+.pet-card.dashboard-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 107, 53, 0.3);
+}
+
+/* Dashboard Card Image Container */
+.pet-image-container {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.pet-image-container .pet-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pet-card.dashboard-card:hover .pet-image-container .pet-image {
+  transform: scale(1.1);
+}
+
+/* Species Badge */
+.species-badge {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 1.2rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.species-badge .species-icon {
+  color: var(--primary-orange);
+}
+
+/* Dashboard Card Content */
+.pet-content {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  gap: 12px;
+}
+
+.pet-content .pet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0;
+}
+
+.pet-content .pet-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--dark-gray);
+  margin: 0;
+}
+
+.pet-content .pet-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.pet-content .action-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.pet-content .action-btn.edit {
+  background: var(--secondary-teal);
+  color: var(--white);
+}
+
+.pet-content .action-btn.edit:hover {
+  background: var(--primary-teal);
+  transform: scale(1.1);
+}
+
+.pet-content .action-btn.delete {
+  background: #ef4444;
+  color: var(--white);
+}
+
+.pet-content .action-btn.delete:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+/* Dashboard Card Details */
+.pet-details-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.detail-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  flex: 1;
+  transition: all 0.3s ease;
+}
+
+.breed-chip {
+  background: rgba(255, 107, 53, 0.1);
+  color: var(--primary-orange);
+}
+
+.age-chip {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.size-chip {
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+}
+
+.location-chip {
+  background: rgba(168, 85, 247, 0.1);
+  color: #7c3aed;
+}
+
+.chip-icon {
+  font-size: 0.9rem;
+}
+
+.chip-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Dashboard Card Description */
+.pet-description {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.05), rgba(255, 142, 158, 0.05));
+}
+
+.pet-description p {
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 500;
+}
+
 .pet-image {
   position: relative;
-  height: 200px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
   overflow: hidden;
+  flex-shrink: 0;
+  border: 3px solid var(--light-gray);
 }
 
 .pet-image img {
@@ -225,14 +419,17 @@
 }
 
 .pet-info {
-  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .pet-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 16px;
+  align-items: center;
+  margin-bottom: 0;
 }
 
 .pet-header h3 {
@@ -285,28 +482,30 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 0;
 }
 
 .detail-item {
   background: rgba(255, 107, 53, 0.1);
   color: var(--primary-orange);
-  padding: 4px 12px;
+  padding: 6px 12px;
   border-radius: 15px;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  white-space: nowrap;
 }
 
 .pet-description {
   color: var(--warm-brown);
   font-size: 0.9rem;
   line-height: 1.5;
-  margin-bottom: 16px;
+  margin-bottom: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -466,6 +665,16 @@
 .status-select.status-approved { border-color: #10b981; }
 .status-select.status-rejected { border-color: #ef4444; }
 
+.application-notes {
+  background: var(--white);
+  padding: 12px;
+  border-radius: var(--border-radius-small);
+  border-left: 3px solid var(--primary-orange);
+  font-size: 0.9rem;
+  color: var(--dark-gray);
+  margin-top: 8px;
+}
+
 /* Form Modal */
 .pet-form-overlay {
   position: fixed;
@@ -610,6 +819,24 @@
   color: var(--warm-brown);
   margin: 0;
   font-size: 0.9rem;
+}
+
+.upload-hint {
+  color: var(--light-gray) !important;
+  font-size: 0.8rem !important;
+  margin-top: 4px !important;
+}
+
+.uploading-indicator {
+  background: rgba(255, 107, 53, 0.1);
+  border: 1px solid var(--primary-orange);
+  border-radius: var(--border-radius-small);
+  padding: 12px;
+  margin-bottom: 16px;
+  text-align: center;
+  color: var(--primary-orange);
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .file-input {
@@ -929,10 +1156,29 @@
   
   .pet-card {
     margin-bottom: 16px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+  }
+  
+  .pet-image {
+    width: 100px;
+    height: 100px;
   }
   
   .pet-info {
-    padding: 16px;
+    width: 100%;
+  }
+  
+  .pet-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+  
+  .pet-details {
+    justify-content: center;
   }
   
   .pet-header h3 {

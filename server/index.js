@@ -6,6 +6,7 @@ import connectDB from "./config/db.js"; // 👈 add .js
 
 import adoptionRoutes from "./routes/adoptionRoutes.js"; // 👈 add .js
 import authRoutes from "./routes/authRoutes.js"; // 👈 add .js
+import notificationRoutes from "./routes/notificationRoutes.js"; // 👈 add .js
 import petRoutes from "./routes/petRoutes.js";
 
 dotenv.config();
@@ -13,7 +14,9 @@ connectDB();
 
 const app = express();
 
-app.use(express.json());
+// Increase payload size limit for image uploads
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
 app.use(cors({
   origin: process.env.CLIENT_URL || ['http://localhost:5173', 'http://localhost:3000'],
@@ -23,6 +26,7 @@ app.use(cors({
 app.use("/api/auth", authRoutes);
 app.use("/api/pets", petRoutes);
 app.use("/api/adoptions", adoptionRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.get("/", (req, res) => {
   res.send("🐾 PAW-love Backend is running!");

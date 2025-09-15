@@ -6,6 +6,7 @@ import BrowsePets from './pages/BrowsePets.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
+import MyApplications from './pages/MyApplications.jsx';
 import PetDetails from './pages/PetDetails.jsx';
 import Signup from './pages/Signup.jsx';
 
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/my-applications" element={<MyApplications />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

@@ -1,13 +1,11 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import {
-    FaCalendarAlt,
     FaCat,
     FaCheck,
     FaDog,
     FaEdit,
     FaEnvelope,
-    FaMapMarkerAlt,
     FaMars, FaMinus,
     FaPhone,
     FaPlus,
@@ -53,7 +51,7 @@ function DashboardInner() {
       console.log('Loading dashboard data...');
       const [p, a] = await Promise.all([
         api.get('/pets/mine/list'),
-        api.get('/pets/owner/applications/list')
+        api.get('/adoptions/mypets')
       ]);
       console.log('Pets response:', p.data);
       console.log('Applications response:', a.data);
@@ -92,7 +90,34 @@ function DashboardInner() {
     const files = Array.from(e.target.files);
     console.log('Selected files:', files);
     console.log('Files length:', files.length);
-    setImageFiles(prev => [...prev, ...files]);
+    
+    // Check total number of images limit
+    const currentCount = imageFiles.length;
+    const newCount = currentCount + files.length;
+    
+    if (newCount > 5) {
+      alert(`Maximum 5 images allowed. You currently have ${currentCount} images and are trying to add ${files.length} more.`);
+      return;
+    }
+    
+    // Validate file sizes and types
+    const validFiles = files.filter(file => {
+      if (file.size > 10 * 1024 * 1024) { // 10MB limit
+        alert(`File ${file.name} is too large (${(file.size / 1024 / 1024).toFixed(2)}MB). Maximum size is 10MB.`);
+        return false;
+      }
+      
+      if (!file.type.startsWith('image/')) {
+        alert(`File ${file.name} is not an image. Please select image files only.`);
+        return false;
+      }
+      
+      return true;
+    });
+    
+    if (validFiles.length > 0) {
+      setImageFiles(prev => [...prev, ...validFiles]);
+    }
   };
 
   const removeImage = (index) => {
@@ -104,24 +129,55 @@ function DashboardInner() {
     });
   };
 
+  // Compress image function
+  const compressImage = (file, maxWidth = 800, quality = 0.8) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        // Calculate new dimensions
+        let { width, height } = img;
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw and compress
+        ctx.drawImage(img, 0, 0, width, height);
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressedDataUrl);
+      };
+      
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
   const uploadImages = async () => {
     if (imageFiles.length === 0) return [];
     
     setUploading(true);
     try {
-      // Use working Unsplash pet images
-      const petImages = [
-        'https://images.unsplash.com/photo-1450778869180-41d0601e046e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-        'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-        'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-        'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-        'https://images.unsplash.com/photo-1507146426996-ef05306b0a2e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
-      ];
-      
-      const uploadedUrls = imageFiles.map((_, index) => 
-        petImages[index % petImages.length]
+      // Compress and convert uploaded files to data URLs
+      const uploadedUrls = await Promise.all(
+        imageFiles.map(async (file) => {
+          // Check file size first
+          if (file.size > 5 * 1024 * 1024) { // 5MB limit
+            console.warn(`File ${file.name} is too large (${(file.size / 1024 / 1024).toFixed(2)}MB), compressing...`);
+          }
+          
+          // Compress the image
+          const compressedDataUrl = await compressImage(file, 800, 0.7);
+          console.log(`Compressed ${file.name}: ${(compressedDataUrl.length / 1024).toFixed(2)}KB`);
+          return compressedDataUrl;
+        })
       );
-      console.log('Generated image URLs:', uploadedUrls);
+      
+      console.log('Generated compressed image data URLs');
       setUploading(false);
       return uploadedUrls;
     } catch (error) {
@@ -146,6 +202,13 @@ function DashboardInner() {
       console.log('New image URLs:', imageUrls);
       console.log('Combined images:', payload.images);
       console.log('Sending payload:', payload);
+      
+      // Log the first image URL to verify it's a data URL
+      if (payload.images.length > 0) {
+        console.log('First image URL type:', payload.images[0].substring(0, 50) + '...');
+        console.log('Is data URL:', payload.images[0].startsWith('data:image/'));
+        console.log('Total payload size:', JSON.stringify(payload).length / 1024, 'KB');
+      }
       
       if (editingPet) {
         await api.put(`/pets/${editingPet._id}`, payload);
@@ -220,9 +283,9 @@ function DashboardInner() {
     }
   };
 
-  const setStatus = async (id, status) => {
+  const setStatus = async (id, status, notes = '') => {
     try {
-      await api.put(`/pets/applications/${id}`, { status });
+      await api.put(`/adoptions/${id}`, { status, notes });
       await load();
     } catch (error) {
       console.error('Error updating application status:', error);
@@ -244,6 +307,54 @@ function DashboardInner() {
       case 'female': return <FaVenus />;
       default: return <FaMinus />;
     }
+  };
+
+  const getDefaultPetImage = (species, petName) => {
+    // Create unique images based on species and name hash
+    const nameHash = petName ? petName.charCodeAt(0) % 3 : 0;
+    
+    const defaultImages = {
+      dog: [
+        "https://images.unsplash.com/photo-1552053831-71594a27632d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1547407139-3c921a71905c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      ],
+      cat: [
+        "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1574158622682-e40e69881006?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      ],
+      bird: [
+        "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      ],
+      rabbit: [
+        "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      ],
+      hamster: [
+        "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      ],
+      fish: [
+        "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      ]
+    };
+    
+    const speciesImages = defaultImages[species?.toLowerCase()] || defaultImages.dog;
+    return speciesImages[nameHash] || speciesImages[0];
+  };
+
+  const getAgeText = (age) => {
+    if (!age) return 'Age unknown';
+    if (age < 1) return `${Math.round(age * 12)} months`;
+    if (age === 1) return '1 year';
+    return `${age} years`;
   };
 
   const getStatusColor = (status) => {
@@ -482,6 +593,7 @@ function DashboardInner() {
                       <div className="image-upload-area">
                         <FaUpload className="upload-icon" />
                         <p>Click to upload images or drag & drop</p>
+                        <p className="upload-hint">Max 5 images, 10MB per file, will be compressed automatically</p>
                         <input
                           type="file"
                           multiple
@@ -497,6 +609,11 @@ function DashboardInner() {
                       {imageFiles.length > 0 && (
                         <div className="image-previews">
                           <h4>New Images ({imageFiles.length})</h4>
+                          {uploading && (
+                            <div className="uploading-indicator">
+                              <span>Compressing images...</span>
+                            </div>
+                          )}
                           <div className="preview-grid">
                             {imageFiles.map((file, index) => (
                               <div key={index} className="image-preview">
@@ -504,12 +621,11 @@ function DashboardInner() {
                                   src={URL.createObjectURL(file)} 
                                   alt={`Preview ${index + 1}`}
                                   onError={(e) => {
-                                    console.log('Preview image failed to load');
-                                    console.log('Failed preview image URL:', e.target.src);
+                                    console.log('Preview image failed to load for file:', file.name);
                                     e.target.style.display = 'none';
                                   }}
-                                  onLoad={(e) => {
-                                    console.log('Preview image loaded successfully:', e.target.src);
+                                  onLoad={() => {
+                                    console.log('Preview image loaded successfully for file:', file.name);
                                   }}
                                 />
                                 <button
@@ -537,11 +653,10 @@ function DashboardInner() {
                                   alt={`Pet ${index + 1}`}
                                   onError={(e) => {
                                     console.log('Form image failed to load:', url);
-                                    console.log('Failed form image URL:', e.target.src);
                                     e.target.style.display = 'none';
                                   }}
-                                  onLoad={(e) => {
-                                    console.log('Form image loaded successfully:', e.target.src);
+                                  onLoad={() => {
+                                    console.log('Form image loaded successfully:', url);
                                   }}
                                 />
                                 <button
@@ -632,37 +747,40 @@ function DashboardInner() {
                 {pets.map((pet) => (
                   <motion.div
                     key={pet._id}
-                    className={`pet-card ${pet.isAdopted ? 'adopted' : ''}`}
+                    className={`pet-card dashboard-card ${pet.isAdopted ? 'adopted' : ''}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    whileHover={{ y: -5 }}
-                    transition={{ duration: 0.3 }}
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
                   >
-                    <div className="pet-image">
-                      {(pet.images && pet.images.length > 0) || (pet.imageUrls && pet.imageUrls.length > 0) ? (
-                        <img 
-                          src={pet.images?.[0] || pet.imageUrls?.[0]} 
-                          alt={pet.name}
-                          onError={(e) => {
-                            console.log('Dashboard image failed to load, using fallback');
-                            console.log('Failed dashboard image URL:', e.target.src);
-                            e.target.style.display = 'none';
-                            e.target.nextSibling.style.display = 'flex';
-                          }}
-                          onLoad={(e) => {
-                            console.log('Dashboard image loaded successfully:', e.target.src);
-                          }}
-                        />
-                      ) : null}
-                      <div className="no-image" style={{ display: (pet.images && pet.images.length > 0) || (pet.imageUrls && pet.imageUrls.length > 0) ? 'none' : 'flex' }}>
+                    {/* Card Image Container */}
+                    <div className="pet-image-container">
+                      <img
+                        src={pet.images?.[0] || pet.imageUrls?.[0] || getDefaultPetImage(pet.species, pet.name)}
+                        alt={pet.name}
+                        className="pet-image"
+                        onError={(e) => {
+                          console.log('Dashboard image failed to load for:', pet.name, 'URL:', e.target.src);
+                          e.target.src = getDefaultPetImage(pet.species, pet.name);
+                        }}
+                        onLoad={() => {
+                          console.log('Dashboard image loaded successfully for:', pet.name);
+                        }}
+                      />
+                      
+                      {/* Adopted Badge */}
+                      {pet.isAdopted && <div className="adopted-badge">Adopted</div>}
+                      
+                      {/* Species Badge */}
+                      <div className="species-badge">
                         {getSpeciesIcon(pet.species)}
                       </div>
-                      {pet.isAdopted && <div className="adopted-badge">Adopted</div>}
                     </div>
-                    
-                    <div className="pet-info">
+
+                    {/* Card Content */}
+                    <div className="pet-content">
                       <div className="pet-header">
-                        <h3>{pet.name}</h3>
+                        <h3 className="pet-name">{pet.name}</h3>
                         <div className="pet-actions">
                           <button
                             className="action-btn edit"
@@ -681,32 +799,32 @@ function DashboardInner() {
                         </div>
                       </div>
                       
-                      <div className="pet-details">
-                        <span className="detail-item">
-                          {getSpeciesIcon(pet.species)} {pet.species}
-                        </span>
-                        <span className="detail-item">
-                          {getGenderIcon(pet.gender)} {pet.gender}
-                        </span>
-                        {pet.breed && (
-                          <span className="detail-item">
-                            {pet.breed}
-                          </span>
-                        )}
-                        {pet.age && (
-                          <span className="detail-item">
-                            <FaCalendarAlt /> {pet.age} years
-                          </span>
-                        )}
-                        {pet.location && (
-                          <span className="detail-item">
-                            <FaMapMarkerAlt /> {pet.location}
-                          </span>
-                        )}
+                      <div className="pet-details-row">
+                        <div className="detail-chip breed-chip">
+                          <span className="chip-icon">🐕</span>
+                          <span className="chip-text">{pet.breed || 'Mixed Breed'}</span>
+                        </div>
+                        <div className="detail-chip age-chip">
+                          <span className="chip-icon">📅</span>
+                          <span className="chip-text">{getAgeText(pet.age)}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="pet-details-row">
+                        <div className="detail-chip size-chip">
+                          <span className="chip-icon">📏</span>
+                          <span className="chip-text">{pet.size || 'Medium'}</span>
+                        </div>
+                        <div className="detail-chip location-chip">
+                          <span className="chip-icon">📍</span>
+                          <span className="chip-text">{pet.location || 'TBD'}</span>
+                        </div>
                       </div>
                       
                       {pet.description && (
-                        <p className="pet-description">{pet.description}</p>
+                        <div className="pet-description">
+                          <p>{pet.description.slice(0, 80)}...</p>
+                        </div>
                       )}
                       
                       {!pet.isAdopted && (
@@ -810,11 +928,16 @@ function DashboardInner() {
                         onChange={(e) => setStatus(app._id, e.target.value)}
                         className={`status-select ${getStatusColor(app.status)}`}
                       >
-                        <option value="pending">⏳ Pending</option>
-                        <option value="contacted">📞 Contacted</option>
-                        <option value="approved">✅ Approved</option>
-                        <option value="rejected">❌ Rejected</option>
+                        <option value="Pending">⏳ Pending</option>
+                        <option value="Contacted">📞 Contacted</option>
+                        <option value="Approved">✅ Approved</option>
+                        <option value="Rejected">❌ Rejected</option>
                       </select>
+                      {app.notes && (
+                        <div className="application-notes">
+                          <strong>Notes:</strong> {app.notes}
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 ))}

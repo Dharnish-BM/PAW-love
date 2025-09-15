@@ -1,0 +1,544 @@
+/* Adoption Form Styles */
+.adoption-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.adoption-form-modal {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 1200px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-header {
+  background: linear-gradient(135deg, #FF6B35, #FF8E9E);
+  color: white;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form-title h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.form-title p {
+  margin: 4px 0 0 0;
+  opacity: 0.9;
+  font-size: 1rem;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.form-progress {
+  padding: 16px 24px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FF6B35, #FF8E9E);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.adoption-form-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex: 1;
+  overflow: hidden;
+}
+
+.pet-details-section {
+  background: #f8f9fa;
+  border-right: 1px solid #e9ecef;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.pet-details-header {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #FF6B35;
+}
+
+.pet-details-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.pet-image-container {
+  margin-bottom: 20px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.pet-image-container img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.pet-info-summary h4 {
+  margin: 0 0 16px 0;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.pet-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.pet-details-grid .detail-item {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 3px solid #FF6B35;
+}
+
+.pet-details-grid .detail-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.pet-details-grid .detail-value {
+  display: block;
+  font-size: 0.95rem;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.pet-description,
+.pet-medical {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border-left: 3px solid #FF6B35;
+}
+
+.pet-description h5,
+.pet-medical h5 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.pet-description p,
+.pet-medical p {
+  margin: 0;
+  color: #495057;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.form-section {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.adoption-form {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.form-step {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-step h3 {
+  color: #2c3e50;
+  margin: 0 0 24px 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  border-bottom: 2px solid #FF6B35;
+  padding-bottom: 8px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.label-icon {
+  color: #FF6B35;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #FF6B35;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.form-group input.error,
+.form-group select.error,
+.form-group textarea.error {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.error-text {
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.checkbox-group {
+  margin: 16px 0;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #2c3e50;
+  line-height: 1.5;
+}
+
+.checkbox-input {
+  display: none;
+}
+
+.checkbox-custom {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e9ecef;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.checkbox-input:checked + .checkbox-custom {
+  background: #FF6B35;
+  border-color: #FF6B35;
+}
+
+.checkbox-input:checked + .checkbox-custom::after {
+  content: '✓';
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.checkbox-text {
+  flex: 1;
+}
+
+.checkbox-text a {
+  color: #FF6B35;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.checkbox-text a:hover {
+  text-decoration: underline;
+}
+
+.agreement-summary {
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 16px;
+}
+
+.agreement-summary h4 {
+  margin: 0 0 16px 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.agreement-summary p {
+  margin: 8px 0;
+  color: #495057;
+  font-size: 0.95rem;
+}
+
+.agreement-summary strong {
+  color: #2c3e50;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #f5c6cb;
+}
+
+.error-icon {
+  font-size: 1.1rem;
+}
+
+.form-actions {
+  padding: 24px;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 120px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #FF6B35, #FF8E9E);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+}
+
+.btn-outline {
+  background: transparent;
+  color: #6c757d;
+  border: 2px solid #e9ecef;
+}
+
+.btn-outline:hover {
+  background: #f8f9fa;
+  border-color: #dee2e6;
+  color: #495057;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .adoption-form-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .pet-details-section {
+    border-right: none;
+    border-bottom: 1px solid #e9ecef;
+    max-height: 300px;
+  }
+  
+  .pet-image-container img {
+    height: 200px;
+  }
+  
+  .pet-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .adoption-form-overlay {
+    padding: 10px;
+  }
+  
+  .adoption-form-modal {
+    max-height: 95vh;
+    max-width: 100%;
+  }
+  
+  .form-header {
+    padding: 20px;
+  }
+  
+  .form-title h2 {
+    font-size: 1.5rem;
+  }
+  
+  .pet-details-section,
+  .form-section {
+    padding: 20px;
+  }
+  
+  .form-content {
+    padding: 0;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .form-actions {
+    padding: 20px;
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-header {
+    padding: 16px;
+  }
+  
+  .form-content {
+    padding: 16px;
+  }
+  
+  .form-actions {
+    padding: 16px;
+  }
+  
+  .form-step h3 {
+    font-size: 1.2rem;
+  }
+}

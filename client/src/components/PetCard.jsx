@@ -9,15 +9,11 @@ export default function PetCard({ pet }) {
   const [showModal, setShowModal] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const navigate = useNavigate();
-
-  // Debug: Log the pet data to see what fields are available
-  console.log('PetCard received pet:', pet);
-  console.log('Pet images field:', pet.images);
-  console.log('Pet imageUrls field:', pet.imageUrls);
-  console.log('Pet imageUrls type:', typeof pet.imageUrls);
-  console.log('Pet images type:', typeof pet.images);
-  console.log('Pet imageUrls length:', pet.imageUrls?.length);
-  console.log('Pet images length:', pet.images?.length);
+  
+  // Debug: Log pet data
+  console.log('PetCard received pet data:', pet);
+  console.log('Pet images:', pet.images);
+  console.log('First image URL:', pet.images?.[0]);
 
   const handleFavorite = (e) => {
     e.stopPropagation();
@@ -54,6 +50,47 @@ export default function PetCard({ pet }) {
     return gender === 'male' ? '♂️' : gender === 'female' ? '♀️' : '❓';
   };
 
+  const getDefaultPetImage = (species, petName) => {
+    // Create unique images based on species and name hash
+    const nameHash = petName ? petName.charCodeAt(0) % 3 : 0;
+    
+    const defaultImages = {
+      dog: [
+        "https://images.unsplash.com/photo-1552053831-71594a27632d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1547407139-3c921a71905c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      ],
+      cat: [
+        "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1574158622682-e40e69881006?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      ],
+      bird: [
+        "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      ],
+      rabbit: [
+        "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      ],
+      hamster: [
+        "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      ],
+      fish: [
+        "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+        "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      ]
+    };
+    
+    const speciesImages = defaultImages[species?.toLowerCase()] || defaultImages.dog;
+    return speciesImages[nameHash] || speciesImages[0];
+  };
+
   return (
     <>
       <motion.div
@@ -65,20 +102,22 @@ export default function PetCard({ pet }) {
         layout
       >
         {/* Card Image Container */}
-        <div className="pet-image-container">
-          <img
-            src={pet.images?.[0] || pet.imageUrls?.[0] || "https://images.unsplash.com/photo-1450778869180-41d0601e046e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"}
-            alt={pet.name}
-            className="pet-image"
-            onError={(e) => {
-              console.log('Image failed to load, using fallback');
-              console.log('Failed image URL:', e.target.src);
-              e.target.src = "https://images.unsplash.com/photo-1450778869180-41d0601e046e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80";
-            }}
-            onLoad={(e) => {
-              console.log('Image loaded successfully:', e.target.src);
-            }}
-          />
+          <div className="pet-image-container">
+            <img
+              src={pet.images?.[0] || pet.imageUrls?.[0] || getDefaultPetImage(pet.species, pet.name)}
+              alt={pet.name}
+              className="pet-image"
+              onError={(e) => {
+                console.log('Image failed to load for:', pet.name, 'URL:', e.target.src);
+                // Only use fallback if it's not already a fallback image
+                if (!e.target.src.includes('unsplash.com') || !e.target.src.includes('getDefaultPetImage')) {
+                  e.target.src = getDefaultPetImage(pet.species, pet.name);
+                }
+              }}
+              onLoad={() => {
+                console.log('Image loaded successfully for:', pet.name, 'URL:', pet.images?.[0] || pet.imageUrls?.[0]);
+              }}
+            />
           
           {/* Hover Overlay */}
           <AnimatePresence>
@@ -150,32 +189,40 @@ export default function PetCard({ pet }) {
         <div className="pet-content">
           <div className="pet-header">
             <h3 className="pet-name">{pet.name}</h3>
-            <span className="pet-gender">{getGenderIcon(pet.gender)}</span>
+            <div className="pet-gender-badge">
+              {getGenderIcon(pet.gender)}
+            </div>
           </div>
           
-          <div className="pet-details">
-            <div className="pet-breed">{pet.breed || 'Mixed Breed'}</div>
-            <div className="pet-age">{getAgeText(pet.age)}</div>
-            <div className="pet-size">{pet.size || 'Medium'}</div>
+          <div className="pet-details-row">
+            <div className="detail-chip breed-chip">
+              <span className="chip-icon">🐕</span>
+              <span className="chip-text">{pet.breed || 'Mixed Breed'}</span>
+            </div>
+            <div className="detail-chip age-chip">
+              <span className="chip-icon">📅</span>
+              <span className="chip-text">{getAgeText(pet.age)}</span>
+            </div>
           </div>
           
-          <div className="pet-location">
-            📍 {pet.location || 'Location TBD'}
+          <div className="pet-details-row">
+            <div className="detail-chip size-chip">
+              <span className="chip-icon">📏</span>
+              <span className="chip-text">{pet.size || 'Medium'}</span>
+            </div>
+            <div className="detail-chip location-chip">
+              <span className="chip-icon">📍</span>
+              <span className="chip-text">{pet.location || 'TBD'}</span>
+            </div>
           </div>
+          
+          {pet.description && (
+            <div className="pet-description">
+              <p>{pet.description.slice(0, 80)}...</p>
+            </div>
+          )}
         </div>
 
-        {/* Card Footer */}
-        <div className="pet-footer">
-          <motion.button
-            className="view-details-btn"
-            onClick={() => navigate(`/pets/${pet._id}`)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <FaPaw />
-            View Details
-          </motion.button>
-        </div>
       </motion.div>
 
       {/* Quick View Modal */}
@@ -209,15 +256,16 @@ export default function PetCard({ pet }) {
               <div className="modal-body">
                 <div className="modal-image">
                   <img
-                    src={pet.images?.[0] || pet.imageUrls?.[0] || "https://images.unsplash.com/photo-1450778869180-41d0601e046e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"}
+                    src={pet.images?.[0] || pet.imageUrls?.[0] || getDefaultPetImage(pet.species, pet.name)}
                     alt={pet.name}
                     onError={(e) => {
-                      console.log('Modal image failed to load, using fallback');
-                      console.log('Failed modal image URL:', e.target.src);
-                      e.target.src = "https://images.unsplash.com/photo-1450778869180-41d0601e046e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80";
+                      console.log('Modal image failed to load for:', pet.name, 'URL:', e.target.src);
+                      if (!e.target.src.includes('unsplash.com') || !e.target.src.includes('getDefaultPetImage')) {
+                        e.target.src = getDefaultPetImage(pet.species, pet.name);
+                      }
                     }}
-                    onLoad={(e) => {
-                      console.log('Modal image loaded successfully:', e.target.src);
+                    onLoad={() => {
+                      console.log('Modal image loaded successfully for:', pet.name);
                     }}
                   />
                 </div>

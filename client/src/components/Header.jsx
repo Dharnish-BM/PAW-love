@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Header.css';
+import NotificationSystem from './NotificationSystem';
 
 export default function Header({ onSearch }) {
   const { user, logout } = useAuth();
@@ -58,6 +59,12 @@ export default function Header({ onSearch }) {
               <span className="nav-icon">🐕</span>
               Browse Pets
             </Link>
+            {user && !user.isShelter && (
+              <Link to="/my-applications" className="nav-link">
+                <span className="nav-icon">📋</span>
+                My Applications
+              </Link>
+            )}
             {user?.isShelter && (
               <Link to="/dashboard" className="nav-link">
                 <span className="nav-icon">🏠</span>
@@ -98,6 +105,7 @@ export default function Header({ onSearch }) {
               </>
             ) : (
               <div className="user-menu">
+                <NotificationSystem />
                 <div className="user-info">
                   <span className="user-avatar">👤</span>
                   <span className="user-name">{user.name}</span>

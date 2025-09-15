@@ -1,0 +1,6 @@
+/* My Applications Page Styles */
+.my-applications-page {
+  min-height: 100vh;
+  background: var(--soft-cream);
+  padding: 24px 0;
+}

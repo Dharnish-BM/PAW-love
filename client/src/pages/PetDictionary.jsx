@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
+import PetCard from '../components/PetCard.jsx';
 import './PetDictionary.css';
 
 export default function PetDictionary() {
@@ -379,80 +380,7 @@ export default function PetDictionary() {
             <>
               <div className="pets-grid">
                 {pets.map(pet => (
-                  <div key={pet._id} className="pet-card" onClick={() => handlePetClick(pet._id)}>
-                    <div className="pet-image">
-                      {pet.images && pet.images.length > 0 ? (
-                        <img 
-                          src={pet.images.find(img => img.isPrimary)?.url || pet.images[0].url} 
-                          alt={pet.name}
-                        />
-                      ) : (
-                        <div className="pet-placeholder">
-                          <span className="placeholder-icon">🐾</span>
-                        </div>
-                      )}
-                      
-                      {pet.isIndianBreed && (
-                        <div className="indian-badge">🇮🇳</div>
-                      )}
-                      {pet.isPopular && (
-                        <div className="popular-badge">⭐</div>
-                      )}
-                      {pet.isRare && (
-                        <div className="rare-badge">💎</div>
-                      )}
-                    </div>
-
-                    <div className="pet-info">
-                      <h3 className="pet-name">{pet.name}</h3>
-                      <p className="pet-breed">{pet.breed}</p>
-                      <p className="pet-origin">{pet.origin}</p>
-                      
-                      <div className="pet-characteristics">
-                        <div className="characteristic">
-                          <span className="char-icon">
-                            {getCharacteristicIcon('energy', pet.characteristics.energy)}
-                          </span>
-                          <span className="char-label">Energy</span>
-                          <span 
-                            className="char-value"
-                            style={{ color: getCharacteristicColor(pet.characteristics.energy) }}
-                          >
-                            {pet.characteristics.energy}
-                          </span>
-                        </div>
-                        
-                        <div className="characteristic">
-                          <span className="char-icon">
-                            {getCharacteristicIcon('intelligence', pet.characteristics.intelligence)}
-                          </span>
-                          <span className="char-label">Intelligence</span>
-                          <span 
-                            className="char-value"
-                            style={{ color: getCharacteristicColor(pet.characteristics.intelligence) }}
-                          >
-                            {pet.characteristics.intelligence}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="pet-size">
-                        <span className="size-label">Size:</span>
-                        <span className="size-value">{pet.size}</span>
-                        <span className="size-range">
-                          {pet.weight.min}-{pet.weight.max} {pet.weight.unit}
-                        </span>
-                      </div>
-
-                      {pet.tags && pet.tags.length > 0 && (
-                        <div className="pet-tags">
-                          {pet.tags.slice(0, 3).map((tag, index) => (
-                            <span key={index} className="pet-tag">#{tag}</span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <PetCard key={pet._id} pet={pet} />
                 ))}
               </div>
 

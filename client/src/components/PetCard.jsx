@@ -102,12 +102,34 @@ export default function PetCard({ pet }) {
     return speciesImages[nameHash] || speciesImages[0];
   };
 
+  const getPrimaryImageUrl = (petData) => {
+    if (!petData) return undefined;
+    // images can be [string] or [{ url, isPrimary }]
+    if (Array.isArray(petData.images) && petData.images.length > 0) {
+      const first = petData.images[0];
+      if (typeof first === 'string') {
+        return petData.images[0];
+      }
+      const primaryObj = petData.images.find(img => img && (img.isPrimary || img.primary));
+      if (primaryObj?.url) return primaryObj.url;
+      const firstWithUrl = petData.images.find(img => img && img.url);
+      if (firstWithUrl?.url) return firstWithUrl.url;
+    }
+    if (Array.isArray(petData.imageUrls) && petData.imageUrls.length > 0) {
+      return petData.imageUrls[0];
+    }
+    if (typeof petData.image === 'string') return petData.image;
+    if (typeof petData.photo === 'string') return petData.photo;
+    return undefined;
+  };
+
   return (
     <>
       <motion.div
         className="pet-card"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        onClick={() => setShowModal(true)}
         whileHover={{ y: -8, scale: 1.02 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
         layout
@@ -115,7 +137,7 @@ export default function PetCard({ pet }) {
         {/* Card Image Container */}
           <div className="pet-image-container">
             <img
-              src={pet.images?.[0] || pet.imageUrls?.[0] || getDefaultPetImage(pet.species, pet.name)}
+              src={getPrimaryImageUrl(pet) || getDefaultPetImage(pet.species, pet.name)}
               alt={pet.name}
               className="pet-image"
               onError={(e) => {
@@ -126,7 +148,7 @@ export default function PetCard({ pet }) {
                 }
               }}
               onLoad={() => {
-                console.log('Image loaded successfully for:', pet.name, 'URL:', pet.images?.[0] || pet.imageUrls?.[0]);
+                console.log('Image loaded successfully for:', pet.name, 'URL:', getPrimaryImageUrl(pet));
               }}
             />
           
@@ -285,7 +307,7 @@ export default function PetCard({ pet }) {
               <div className="modal-body">
                 <div className="modal-image">
                   <img
-                    src={pet.images?.[0] || pet.imageUrls?.[0] || getDefaultPetImage(pet.species, pet.name)}
+                    src={getPrimaryImageUrl(pet) || getDefaultPetImage(pet.species, pet.name)}
                     alt={pet.name}
                     onError={(e) => {
                       console.log('Modal image failed to load for:', pet.name, 'URL:', e.target.src);

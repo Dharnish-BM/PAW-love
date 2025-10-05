@@ -14,6 +14,9 @@ import petRoutes from "./routes/petRoutes.js";
 dotenv.config();
 connectDB();
 
+app.use(cors({
+  origin: 'https://paw-lovee.vercel.app/', // replace with Vercel frontend URL
+}));
 const app = express();
 
 // Increase payload size limit for image uploads

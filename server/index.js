@@ -13,11 +13,11 @@ import petRoutes from "./routes/petRoutes.js";
 
 dotenv.config();
 connectDB();
-
+const app = express();
 app.use(cors({
   origin: 'https://paw-lovee.vercel.app/', // replace with Vercel frontend URL
 }));
-const app = express();
+
 
 // Increase payload size limit for image uploads
 app.use(express.json({ limit: '50mb' }));

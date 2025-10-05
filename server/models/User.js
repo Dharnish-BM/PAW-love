@@ -29,6 +29,18 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false, // Only super-admin sets true manually
   },
+  shelterName: {
+    type: String,
+    required: function() {
+      return this.isShelter;
+    },
+  },
+  shelterDescription: {
+    type: String,
+  },
+  shelterWebsite: {
+    type: String,
+  },
   isGoogleUser: {
     type: Boolean,
     default: false,

@@ -6,6 +6,7 @@ import connectDB from "./config/db.js"; // 👈 add .js
 
 import adoptionRoutes from "./routes/adoptionRoutes.js"; // 👈 add .js
 import authRoutes from "./routes/authRoutes.js"; // 👈 add .js
+import communityRoutes from "./routes/communityRoutes.js"; // 👈 add .js
 import notificationRoutes from "./routes/notificationRoutes.js"; // 👈 add .js
 import petRoutes from "./routes/petRoutes.js";
 
@@ -27,6 +28,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/pets", petRoutes);
 app.use("/api/adoptions", adoptionRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/community", communityRoutes);
 
 app.get("/", (req, res) => {
   res.send("🐾 PAW-love Backend is running!");

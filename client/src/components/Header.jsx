@@ -59,6 +59,10 @@ export default function Header({ onSearch }) {
               <span className="nav-icon">🐕</span>
               Browse Pets
             </Link>
+            <Link to="/community" className="nav-link">
+              <span className="nav-icon">💬</span>
+              Community
+            </Link>
             <Link to="/contact" className="nav-link">
               <span className="nav-icon">✉️</span>
               Contact

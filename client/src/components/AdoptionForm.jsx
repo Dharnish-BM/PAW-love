@@ -499,16 +499,16 @@ export default function AdoptionForm({ pet, onClose, onSuccess }) {
       case 4:
         return (
           <div className="form-step">
-            <h3>Adoption Specific</h3>
+            <h3>{pet.listingType === 'sale' ? 'Purchase' : 'Adoption'} Specific</h3>
             <div className="form-grid">
               <div className="form-group full-width">
-                <label>Reason for Adoption *</label>
+                <label>Reason for {pet.listingType === 'sale' ? 'Purchase' : 'Adoption'} *</label>
                 <textarea
                   name="adoptionReason"
                   value={form.adoptionReason}
                   onChange={handleChange}
                   className={errors.adoptionReason ? 'error' : ''}
-                  placeholder="Why do you want to adopt this specific pet? What draws you to them?"
+                  placeholder={`Why do you want to ${pet.listingType === 'sale' ? 'buy' : 'adopt'} this specific pet? What draws you to them?`}
                   rows="4"
                 />
                 {errors.adoptionReason && <span className="error-text">{errors.adoptionReason}</span>}
@@ -647,7 +647,7 @@ export default function AdoptionForm({ pet, onClose, onSuccess }) {
                     />
                     <span className="checkbox-custom"></span>
                     <span className="checkbox-text">
-                      I agree to the <a href="#" target="_blank">Terms and Conditions</a> and <a href="#" target="_blank">Adoption Agreement</a> *
+                      I agree to the <a href="#" target="_blank">Terms and Conditions</a> and <a href="#" target="_blank">{pet.listingType === 'sale' ? 'Purchase' : 'Adoption'} Agreement</a> *
                     </span>
                   </label>
                   {errors.agreeToTerms && <span className="error-text">{errors.agreeToTerms}</span>}
@@ -666,7 +666,7 @@ export default function AdoptionForm({ pet, onClose, onSuccess }) {
                     />
                     <span className="checkbox-custom"></span>
                     <span className="checkbox-text">
-                      I agree to allow a home visit by shelter staff before adoption approval *
+                      I agree to allow a home visit by {pet.listingType === 'sale' ? 'seller' : 'shelter staff'} before {pet.listingType === 'sale' ? 'purchase' : 'adoption'} approval *
                     </span>
                   </label>
                   {errors.agreeToHomeVisit && <span className="error-text">{errors.agreeToHomeVisit}</span>}
@@ -685,7 +685,7 @@ export default function AdoptionForm({ pet, onClose, onSuccess }) {
                     />
                     <span className="checkbox-custom"></span>
                     <span className="checkbox-text">
-                      I agree to follow-up contact from the shelter to ensure the pet's well-being *
+                      I agree to follow-up contact from the {pet.listingType === 'sale' ? 'seller' : 'shelter'} to ensure the pet's well-being *
                     </span>
                   </label>
                   {errors.agreeToFollowUp && <span className="error-text">{errors.agreeToFollowUp}</span>}
@@ -694,11 +694,19 @@ export default function AdoptionForm({ pet, onClose, onSuccess }) {
 
               <div className="form-group full-width">
                 <div className="agreement-summary">
-                  <h4>Adoption Summary</h4>
+                  <h4>{pet.listingType === 'sale' ? 'Purchase' : 'Adoption'} Summary</h4>
                   <p><strong>Pet:</strong> {pet.name}</p>
                   <p><strong>Applicant:</strong> {form.fullName}</p>
                   <p><strong>Application Date:</strong> {new Date().toLocaleDateString()}</p>
                   <p><strong>Status:</strong> Pending Review</p>
+                  {pet.listingType === 'sale' && (
+                    <p><strong>Price:</strong> {new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: pet.currency || 'USD',
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
+                    }).format(pet.price || 0)}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -729,8 +737,8 @@ export default function AdoptionForm({ pet, onClose, onSuccess }) {
         >
           <div className="form-header">
             <div className="form-title">
-              <h2>Adoption Application</h2>
-              <p>Adopting {pet.name}</p>
+              <h2>{pet.listingType === 'sale' ? 'Purchase' : 'Adoption'} Application</h2>
+              <p>{pet.listingType === 'sale' ? 'Buying' : 'Adopting'} {pet.name}</p>
             </div>
             <button className="close-btn" onClick={onClose}>
               <FaTimes />
@@ -858,7 +866,7 @@ export default function AdoptionForm({ pet, onClose, onSuccess }) {
                       ) : (
                         <>
                           <FaCheck />
-                          Submit Application
+                          Submit {pet.listingType === 'sale' ? 'Purchase' : 'Adoption'} Application
                         </>
                       )}
                     </button>

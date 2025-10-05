@@ -131,6 +131,17 @@ export const googleAuth = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get all shelters
+// @route   GET /api/auth/shelters
+// @access  Public
+export const getShelters = asyncHandler(async (req, res) => {
+  const shelters = await User.find({ isShelter: true })
+    .select('name email phone address shelterName shelterDescription shelterWebsite picture')
+    .sort({ shelterName: 1 });
+  
+  res.json(shelters);
+});
+
 // @desc    Logout user
 // @route   POST /api/auth/logout
 // @access  Public

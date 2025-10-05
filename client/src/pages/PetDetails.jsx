@@ -77,6 +77,17 @@ export default function PetDetails() {
     return `${age} years`;
   };
 
+  const formatPrice = (price, isNegotiable, currency = 'USD') => {
+    const formattedPrice = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price);
+    
+    return isNegotiable ? `${formattedPrice} (Negotiable)` : formattedPrice;
+  };
+
   if (loading) {
     return (
       <div className="pet-details-loading">
@@ -200,6 +211,26 @@ export default function PetDetails() {
               </div>
             </div>
 
+            {/* Price/Adoption Section */}
+            <div className="pet-listing-section">
+              {pet.listingType === 'sale' ? (
+                <div className="price-display">
+                  <span className="price-label">Price:</span>
+                  <span className="price-amount">
+                    {formatPrice(pet.price, pet.isNegotiable, pet.currency)}
+                  </span>
+                  {pet.isNegotiable && (
+                    <span className="negotiable-badge">💬 Price is negotiable</span>
+                  )}
+                </div>
+              ) : (
+                <div className="adoption-display">
+                  <span className="adoption-label">Status:</span>
+                  <span className="adoption-amount">🆓 Free Adoption</span>
+                </div>
+              )}
+            </div>
+
             {pet.description && (
               <div className="pet-description">
                 <h3>About {pet.name}</h3>
@@ -214,13 +245,13 @@ export default function PetDetails() {
               </div>
             )}
 
-            {/* Adoption Section */}
+            {/* Purchase/Adoption Section */}
             <div className="adoption-section">
               {pet.isAdopted ? (
                 <div className="adopted-notice">
                   <div className="adopted-icon">🏠</div>
-                  <h3>This pet has been adopted!</h3>
-                  <p>Thank you for your interest. This pet has found their forever home.</p>
+                  <h3>This pet has been {pet.listingType === 'sale' ? 'sold' : 'adopted'}!</h3>
+                  <p>Thank you for your interest. This pet has found their new home.</p>
                   <button className="btn btn-outline" onClick={() => navigate('/browse')}>
                     Browse Other Pets
                   </button>
@@ -228,19 +259,19 @@ export default function PetDetails() {
               ) : hasApplied ? (
                 <div className="applied-notice">
                   <div className="applied-icon">📋</div>
-                  <h3>Application Submitted</h3>
-                  <p>You have already submitted an adoption application for {pet.name}. The shelter will contact you soon.</p>
+                  <h3>{pet.listingType === 'sale' ? 'Purchase' : 'Adoption'} Application Submitted</h3>
+                  <p>You have already submitted a {pet.listingType === 'sale' ? 'purchase' : 'adoption'} application for {pet.name}. The {pet.listingType === 'sale' ? 'seller' : 'shelter'} will contact you soon.</p>
                   <button className="btn btn-primary" onClick={() => navigate('/my-applications')}>
                     Track Application
                   </button>
                 </div>
               ) : (
                 <div className="adoption-cta">
-                  <h3>Ready to Adopt {pet.name}?</h3>
-                  <p>Fill out our comprehensive adoption application to start the process.</p>
+                  <h3>Ready to {pet.listingType === 'sale' ? 'Buy' : 'Adopt'} {pet.name}?</h3>
+                  <p>Fill out our comprehensive {pet.listingType === 'sale' ? 'purchase' : 'adoption'} application to start the process.</p>
                   <button className="btn btn-primary adopt-btn" onClick={handleAdoptClick}>
                     <FaPaw />
-                    Start Adoption Process
+                    Start {pet.listingType === 'sale' ? 'Purchase' : 'Adoption'} Process
                   </button>
                 </div>
               )}

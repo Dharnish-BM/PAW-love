@@ -8,13 +8,15 @@ import './BrowsePets.css';
 export default function BrowsePets({ globalQuery = '' }) {
   const [pets, setPets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({ species: '', gender: '', size: '' });
+  const [filters, setFilters] = useState({ species: '', gender: '', size: '', listingType: '', minPrice: '', maxPrice: '' });
   const [q, setQ] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortOrder, setSortOrder] = useState('desc');
 
   const load = async () => {
     setLoading(true);
-    const params = { q: globalQuery || q, ...filters };
+    const params = { q: globalQuery || q, ...filters, sortBy, sortOrder };
     try {
       const { data } = await api.get('/pets', { params });
       setPets(data);
@@ -26,14 +28,14 @@ export default function BrowsePets({ globalQuery = '' }) {
     }
   };
 
-  useEffect(() => { load(); }, [globalQuery, filters]);
+  useEffect(() => { load(); }, [globalQuery, filters, sortBy, sortOrder]);
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
   const clearFilters = () => {
-    setFilters({ species: '', gender: '', size: '' });
+    setFilters({ species: '', gender: '', size: '', listingType: '', minPrice: '', maxPrice: '' });
     setQ('');
   };
 
@@ -90,6 +92,32 @@ export default function BrowsePets({ globalQuery = '' }) {
               <FaSearch />
               Search
             </button>
+          </div>
+
+          {/* Sort Controls */}
+          <div className="sort-section">
+            <div className="sort-controls">
+              <label className="sort-label">Sort by:</label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="sort-select"
+              >
+                <option value="createdAt">Newest First</option>
+                <option value="price">Price</option>
+                <option value="name">Name</option>
+                <option value="age">Age</option>
+              </select>
+              
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+                className="sort-select"
+              >
+                <option value="desc">Descending</option>
+                <option value="asc">Ascending</option>
+              </select>
+            </div>
           </div>
 
           <div className="filters-section">
@@ -164,6 +192,51 @@ export default function BrowsePets({ globalQuery = '' }) {
                       <option value="medium">Medium</option>
                       <option value="large">Large</option>
                     </select>
+                  </div>
+
+                  <div className="filter-group">
+                    <label className="filter-label">
+                      🏷️ Listing Type
+                    </label>
+                    <select
+                      value={filters.listingType}
+                      onChange={(e) => handleFilterChange('listingType', e.target.value)}
+                      className="filter-select"
+                    >
+                      <option value="">All Listings</option>
+                      <option value="adoption">🆓 Free Adoption</option>
+                      <option value="sale">💰 For Sale</option>
+                    </select>
+                  </div>
+
+                  <div className="filter-group">
+                    <label className="filter-label">
+                      💰 Min Price (Sale only)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="10"
+                      value={filters.minPrice}
+                      onChange={(e) => handleFilterChange('minPrice', e.target.value)}
+                      className="filter-input"
+                      placeholder="Min price"
+                    />
+                  </div>
+
+                  <div className="filter-group">
+                    <label className="filter-label">
+                      💰 Max Price (Sale only)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="10"
+                      value={filters.maxPrice}
+                      onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
+                      className="filter-input"
+                      placeholder="Max price"
+                    />
                   </div>
 
                   <button onClick={clearFilters} className="clear-filters-btn">

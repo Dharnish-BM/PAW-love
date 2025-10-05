@@ -13,6 +13,9 @@ export default function Signup() {
     phone: "",
     address: "",
     isShelter: false,
+    shelterName: "",
+    shelterDescription: "",
+    shelterWebsite: "",
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -212,6 +215,65 @@ export default function Signup() {
                 </span>
               </label>
             </div>
+
+            {/* Shelter-specific fields */}
+            {form.isShelter && (
+              <div className="shelter-fields">
+                <div className="shelter-section-header">
+                  <h3>🏠 Shelter Information</h3>
+                  <p>Please provide your shelter details</p>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="shelterName" className="form-label">
+                    <span className="label-icon">🏢</span>
+                    Shelter Name *
+                  </label>
+                  <input
+                    id="shelterName"
+                    name="shelterName"
+                    type="text"
+                    value={form.shelterName}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="Enter your shelter name"
+                    required={form.isShelter}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="shelterDescription" className="form-label">
+                    <span className="label-icon">📝</span>
+                    Shelter Description
+                  </label>
+                  <textarea
+                    id="shelterDescription"
+                    name="shelterDescription"
+                    value={form.shelterDescription}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="Tell us about your shelter..."
+                    rows="3"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="shelterWebsite" className="form-label">
+                    <span className="label-icon">🌐</span>
+                    Website URL
+                  </label>
+                  <input
+                    id="shelterWebsite"
+                    name="shelterWebsite"
+                    type="url"
+                    value={form.shelterWebsite}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="https://your-shelter-website.com"
+                  />
+                </div>
+              </div>
+            )}
 
             <button 
               type="submit" 

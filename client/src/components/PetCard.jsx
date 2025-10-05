@@ -50,6 +50,17 @@ export default function PetCard({ pet }) {
     return gender === 'male' ? '♂️' : gender === 'female' ? '♀️' : '❓';
   };
 
+  const formatPrice = (price, isNegotiable, currency = 'USD') => {
+    const formattedPrice = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price);
+    
+    return isNegotiable ? `${formattedPrice} (Negotiable)` : formattedPrice;
+  };
+
   const getDefaultPetImage = (species, petName) => {
     // Create unique images based on species and name hash
     const nameHash = petName ? petName.charCodeAt(0) % 3 : 0;
@@ -158,7 +169,7 @@ export default function PetCard({ pet }) {
                       onClick={() => navigate(`/pets/${pet._id}`)}
                     >
                       <FaPaw />
-                      Adopt Me
+                      {pet.listingType === 'sale' ? 'Buy Now' : 'Adopt Me'}
                     </button>
                   </motion.div>
                 </div>
@@ -192,6 +203,24 @@ export default function PetCard({ pet }) {
             <div className="pet-gender-badge">
               {getGenderIcon(pet.gender)}
             </div>
+          </div>
+          
+          {/* Price/Adoption Display */}
+          <div className="pet-listing-info">
+            {pet.listingType === 'sale' ? (
+              <div className="pet-price">
+                <span className="price-amount">
+                  {formatPrice(pet.price, pet.isNegotiable, pet.currency)}
+                </span>
+                {pet.isNegotiable && (
+                  <span className="negotiable-badge">💬</span>
+                )}
+              </div>
+            ) : (
+              <div className="adoption-badge">
+                <span className="adoption-text">🆓 Free Adoption</span>
+              </div>
+            )}
           </div>
           
           <div className="pet-details-row">
@@ -295,6 +324,21 @@ export default function PetCard({ pet }) {
                     <span className="info-label">Location:</span>
                     <span className="info-value">📍 {pet.location || 'Location TBD'}</span>
                   </div>
+                  {pet.listingType === 'sale' ? (
+                    <div className="info-row price-row">
+                      <span className="info-label">Price:</span>
+                      <span className="info-value price-value">
+                        {formatPrice(pet.price, pet.isNegotiable, pet.currency)}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="info-row adoption-row">
+                      <span className="info-label">Status:</span>
+                      <span className="info-value adoption-value">
+                        🆓 Free Adoption
+                      </span>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="modal-description">
@@ -315,7 +359,7 @@ export default function PetCard({ pet }) {
                   onClick={handleAdopt}
                 >
                   <FaPaw />
-                  Adopt {pet.name}
+                  {pet.listingType === 'sale' ? `Buy ${pet.name}` : `Adopt ${pet.name}`}
                 </button>
               </div>
             </motion.div>

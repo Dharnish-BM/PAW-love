@@ -12,6 +12,26 @@ const petSchema = new mongoose.Schema({
   medicalHistory: { type: String },
   images: [{ type: String }], // array of image URLs
   isAdopted: { type: Boolean, default: false },
+  // Listing type and pricing
+  listingType: { 
+    type: String, 
+    enum: ['adoption', 'sale'], 
+    default: 'adoption' 
+  },
+  price: { 
+    type: Number, 
+    required: function() { return this.listingType === 'sale'; },
+    min: 0 
+  },
+  isNegotiable: { 
+    type: Boolean, 
+    default: function() { return this.listingType === 'sale'; }
+  },
+  currency: { 
+    type: String, 
+    default: 'USD',
+    required: function() { return this.listingType === 'sale'; }
+  },
   postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 }, { timestamps: true });
 

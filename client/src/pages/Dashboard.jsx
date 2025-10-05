@@ -38,6 +38,10 @@ function DashboardInner() {
     location: '',
     description: '',
     medicalHistory: '',
+    listingType: 'adoption',
+    price: '',
+    isNegotiable: true,
+    currency: 'USD',
     images: []
   });
   
@@ -228,6 +232,10 @@ function DashboardInner() {
         location: '', 
         description: '', 
         medicalHistory: '', 
+        listingType: 'adoption',
+        price: '',
+        isNegotiable: true,
+        currency: 'USD',
         images: []
       });
       setImageFiles([]);
@@ -256,6 +264,10 @@ function DashboardInner() {
       location: pet.location || '',
       description: pet.description || '',
       medicalHistory: pet.medicalHistory || '',
+      listingType: pet.listingType || 'adoption',
+      price: pet.price || '',
+      isNegotiable: pet.isNegotiable !== undefined ? pet.isNegotiable : true,
+      currency: pet.currency || 'USD',
       images: pet.images || pet.imageUrls || []
     });
     setShowAddForm(true);
@@ -475,6 +487,10 @@ function DashboardInner() {
                         location: '', 
                         description: '', 
                         medicalHistory: '', 
+                        listingType: 'adoption',
+                        price: '',
+                        isNegotiable: true,
+                        currency: 'USD',
                         images: []
                       });
                       setImageFiles([]);
@@ -495,6 +511,18 @@ function DashboardInner() {
                         required
                         placeholder="Enter pet's name"
                       />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Listing Type *</label>
+                      <select
+                        value={form.listingType}
+                        onChange={(e) => setForm({...form, listingType: e.target.value})}
+                        required
+                      >
+                        <option value="adoption">🆓 Free Adoption</option>
+                        <option value="sale">💰 For Sale</option>
+                      </select>
                     </div>
 
                     <div className="form-group">
@@ -555,6 +583,56 @@ function DashboardInner() {
                       </select>
                     </div>
                   </div>
+
+                  {/* Pricing Section - Only for Sale Listings */}
+                  {form.listingType === 'sale' && (
+                    <>
+                      <div className="form-section-header">
+                        <h3>💰 Pricing Information</h3>
+                      </div>
+                      
+                      <div className="form-grid">
+                        <div className="form-group">
+                          <label>Price *</label>
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={form.price}
+                            onChange={(e) => setForm({...form, price: e.target.value})}
+                            placeholder="Enter price"
+                            required
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label>Currency</label>
+                          <select
+                            value={form.currency}
+                            onChange={(e) => setForm({...form, currency: e.target.value})}
+                          >
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="GBP">GBP (£)</option>
+                            <option value="CAD">CAD (C$)</option>
+                            <option value="AUD">AUD (A$)</option>
+                          </select>
+                        </div>
+
+                        <div className="form-group full-width">
+                          <label className="checkbox-label">
+                            <input
+                              type="checkbox"
+                              checked={form.isNegotiable}
+                              onChange={(e) => setForm({...form, isNegotiable: e.target.checked})}
+                            />
+                            <span className="checkbox-custom"></span>
+                            Price is negotiable
+                          </label>
+                        </div>
+                      </div>
+                    </>
+                  )}
 
                   <div className="form-group full-width">
                     <label>Location</label>
@@ -694,6 +772,10 @@ function DashboardInner() {
                           location: '', 
                           description: '', 
                           medicalHistory: '', 
+                          listingType: 'adoption',
+                          price: '',
+                          isNegotiable: true,
+                          currency: 'USD',
                           images: []
                         });
                         setImageFiles([]);
@@ -819,6 +901,28 @@ function DashboardInner() {
                           <span className="chip-icon">📍</span>
                           <span className="chip-text">{pet.location || 'TBD'}</span>
                         </div>
+                      </div>
+                      
+                      <div className="pet-listing-info">
+                        {pet.listingType === 'sale' ? (
+                          <div className="price-display">
+                            <span className="price-amount">
+                              {new Intl.NumberFormat('en-US', {
+                                style: 'currency',
+                                currency: pet.currency || 'USD',
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                              }).format(pet.price || 0)}
+                            </span>
+                            {pet.isNegotiable && (
+                              <span className="negotiable-badge">💬 Negotiable</span>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="adoption-badge">
+                            <span className="adoption-text">🆓 Free Adoption</span>
+                          </div>
+                        )}
                       </div>
                       
                       {pet.description && (

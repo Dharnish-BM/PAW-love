@@ -1,16 +1,16 @@
 import express from "express";
 import {
-  getPosts,
-  getPost,
-  createPost,
-  updatePost,
-  deletePost,
-  likePost,
-  getComments,
-  createComment,
-  updateComment,
-  deleteComment,
-  likeComment
+    createComment,
+    createPost,
+    deleteComment,
+    deletePost,
+    getComments,
+    getPost,
+    getPosts,
+    likeComment,
+    likePost,
+    updateComment,
+    updatePost
 } from "../controllers/communityController.js";
 import { protect } from "../middleware/authMiddleware.js";
 

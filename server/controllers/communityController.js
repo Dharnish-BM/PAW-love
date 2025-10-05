@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
-import CommunityPost from "../models/CommunityPost.js";
 import Comment from "../models/Comment.js";
+import CommunityPost from "../models/CommunityPost.js";
 
 // @desc    Get all community posts
 // @route   GET /api/community/posts

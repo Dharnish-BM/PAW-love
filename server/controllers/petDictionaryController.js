@@ -187,19 +187,6 @@ export const getFeaturedPets = asyncHandler(async (req, res) => {
   res.json(pets);
 });
 
-// @desc    Seed pet dictionary data
-// @route   POST /api/dictionary/seed
-// @access  Private (Admin only)
-export const seedDictionary = asyncHandler(async (req, res) => {
-  try {
-    await seedPetDictionary();
-    res.json({ message: "Pet dictionary seeded successfully" });
-  } catch (error) {
-    res.status(500);
-    throw new Error("Failed to seed pet dictionary");
-  }
-});
-
 // @desc    Search pets by name or breed
 // @route   GET /api/dictionary/search
 // @access  Public

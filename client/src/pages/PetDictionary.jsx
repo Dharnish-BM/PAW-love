@@ -380,7 +380,7 @@ export default function PetDictionary() {
             <>
               <div className="pets-grid">
                 {pets.map(pet => (
-                  <PetCard key={pet._id} pet={pet} />
+                  <PetCard key={pet._id} pet={pet} showListing={false} showAdoptCTA={false} />
                 ))}
               </div>
 

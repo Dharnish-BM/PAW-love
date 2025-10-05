@@ -8,6 +8,7 @@ import adoptionRoutes from "./routes/adoptionRoutes.js"; // 👈 add .js
 import authRoutes from "./routes/authRoutes.js"; // 👈 add .js
 import communityRoutes from "./routes/communityRoutes.js"; // 👈 add .js
 import notificationRoutes from "./routes/notificationRoutes.js"; // 👈 add .js
+import petDictionaryRoutes from "./routes/petDictionaryRoutes.js"; // 👈 add .js
 import petRoutes from "./routes/petRoutes.js";
 
 dotenv.config();
@@ -29,6 +30,7 @@ app.use("/api/pets", petRoutes);
 app.use("/api/adoptions", adoptionRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/community", communityRoutes);
+app.use("/api/dictionary", petDictionaryRoutes);
 
 app.get("/", (req, res) => {
   res.send("🐾 PAW-love Backend is running!");

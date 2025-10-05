@@ -10,6 +10,7 @@ import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
 import MyApplications from './pages/MyApplications.jsx';
 import PetDetails from './pages/PetDetails.jsx';
+import PetDictionary from './pages/PetDictionary.jsx';
 import Signup from './pages/Signup.jsx';
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/browse" element={<BrowsePets globalQuery={query} />} />
           <Route path="/pets/:id" element={<PetDetails />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/dictionary" element={<PetDictionary />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />

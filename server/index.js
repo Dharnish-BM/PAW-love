@@ -2,32 +2,41 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import connectDB from "./config/db.js"; // 👈 add .js
+import connectDB from "./config/db.js";
 
-import adoptionRoutes from "./routes/adoptionRoutes.js"; // 👈 add .js
-import authRoutes from "./routes/authRoutes.js"; // 👈 add .js
-import communityRoutes from "./routes/communityRoutes.js"; // 👈 add .js
-import notificationRoutes from "./routes/notificationRoutes.js"; // 👈 add .js
-import petDictionaryRoutes from "./routes/petDictionaryRoutes.js"; // 👈 add .js
+import adoptionRoutes from "./routes/adoptionRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import communityRoutes from "./routes/communityRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
+import petDictionaryRoutes from "./routes/petDictionaryRoutes.js";
 import petRoutes from "./routes/petRoutes.js";
 
 dotenv.config();
 connectDB();
+
 const app = express();
-app.use(cors({
-  origin: 'https://paw-lovee.vercel.app/', // replace with Vercel frontend URL
-}));
 
+// ✅ Correct CORS setup
+app.use(
+  cors({
+    origin: ["https://paw-lovee.vercel.app", "http://localhost:5173"],
+    credentials: true,
+  })
+);
 
-// Increase payload size limit for image uploads
+// ✅ Handle preflight
+app.options("*", cors());
+
+// parse json + files
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
-app.use(cookieParser());
-app.use(cors({
-  origin: process.env.CLIENT_URL || ['http://localhost:5173', 'http://localhost:3000'],
-  credentials: true
-}));
 
+app.use(cookieParser());
+
+// ❌ REMOVE THIS (it was breaking everything)
+// app.use(cors({ ... }))
+
+// routes
 app.use("/api/auth", authRoutes);
 app.use("/api/pets", petRoutes);
 app.use("/api/adoptions", adoptionRoutes);

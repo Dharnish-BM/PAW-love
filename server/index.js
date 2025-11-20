@@ -16,27 +16,38 @@ connectDB();
 
 const app = express();
 
-// ✅ Correct CORS setup
+/* -----------------------------------------------------
+   ✅ FIXED CORS CONFIG (works on Render + Vercel)
+----------------------------------------------------- */
+
 app.use(
   cors({
-    origin: ["https://paw-lovee.vercel.app", "http://localhost:5173"],
+    origin: "https://paw-lovee.vercel.app", // EXACT domain only
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
 
-// ✅ Handle preflight
-app.options("*", cors());
+// Preflight
+app.options("*", (req, res) => {
+    res.header("Access-Control-Allow-Origin", "https://paw-lovee.vercel.app");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
+    return res.sendStatus(200);
+});
 
-// parse json + files
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
-
+/* -----------------------------------------------------
+   Parse request body + cookies
+----------------------------------------------------- */
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
 
-// ❌ REMOVE THIS (it was breaking everything)
-// app.use(cors({ ... }))
-
-// routes
+/* -----------------------------------------------------
+   Routes
+----------------------------------------------------- */
 app.use("/api/auth", authRoutes);
 app.use("/api/pets", petRoutes);
 app.use("/api/adoptions", adoptionRoutes);
@@ -48,5 +59,10 @@ app.get("/", (req, res) => {
   res.send("🐾 PAW-love Backend is running!");
 });
 
+/* -----------------------------------------------------
+   Start Server
+----------------------------------------------------- */
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () =>
+  console.log(`🚀 Server running on port ${PORT}`)
+);

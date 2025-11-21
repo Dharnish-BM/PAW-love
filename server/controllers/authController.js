@@ -10,7 +10,17 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 // @route   POST /api/auth/signup
 // @access  Public
 export const signup = asyncHandler(async (req, res) => {
-  const { name, email, password, phone, address, isShelter } = req.body;
+  const {
+    name,
+    email,
+    password,
+    phone,
+    address,
+    isShelter,
+    shelterName,
+    shelterDescription,
+    shelterWebsite,
+  } = req.body;
 
   const userExists = await User.findOne({ email });
   if (userExists) {
@@ -21,13 +31,17 @@ export const signup = asyncHandler(async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
+  // Ensure shelter-specific fields are persisted when registering as a shelter
   const user = await User.create({
     name,
     email,
     password: hashedPassword,
     phone,
     address,
-    isShelter: isShelter || false, // will still need manual DB verification
+    isShelter: !!isShelter, // ensure boolean
+    shelterName: isShelter ? shelterName : undefined,
+    shelterDescription: isShelter ? shelterDescription : undefined,
+    shelterWebsite: isShelter ? shelterWebsite : undefined,
   });
 
   if (user) {
@@ -37,6 +51,9 @@ export const signup = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       isShelter: user.isShelter,
+      shelterName: user.shelterName,
+      shelterDescription: user.shelterDescription,
+      shelterWebsite: user.shelterWebsite,
     });
   } else {
     res.status(400);

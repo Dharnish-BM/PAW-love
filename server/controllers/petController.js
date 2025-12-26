@@ -1,6 +1,26 @@
 import asyncHandler from "express-async-handler";
 import Pet from "../models/Pet.js";
 
+const normalizeImageArray = (payload) => {
+  if (!payload) return [];
+
+  if (Array.isArray(payload.images) && payload.images.length) {
+    return payload.images.filter(Boolean);
+  }
+  if (typeof payload.images === "string" && payload.images) {
+    return [payload.images];
+  }
+
+  if (Array.isArray(payload.imageUrls) && payload.imageUrls.length) {
+    return payload.imageUrls.filter(Boolean);
+  }
+  if (typeof payload.imageUrls === "string" && payload.imageUrls) {
+    return [payload.imageUrls];
+  }
+
+  return [];
+};
+
 // @desc    Get all available pets
 // @route   GET /api/pets
 // @access  Public
@@ -106,8 +126,10 @@ export const addPet = asyncHandler(async (req, res) => {
     }
   }
   
+  const { images: rawImages, imageUrls, ...rest } = req.body;
   const petData = {
-    ...req.body,
+    ...rest,
+    images: normalizeImageArray({ images: rawImages, imageUrls }),
     postedBy: req.user._id,
   };
   
@@ -161,7 +183,13 @@ export const updatePet = asyncHandler(async (req, res) => {
     }
   }
 
-  const updatedPet = await Pet.findByIdAndUpdate(req.params.id, req.body, {
+  const updatePayload = { ...req.body };
+  if (Array.isArray(req.body.images) || Array.isArray(req.body.imageUrls)) {
+    updatePayload.images = normalizeImageArray(req.body);
+  }
+  delete updatePayload.imageUrls;
+
+  const updatedPet = await Pet.findByIdAndUpdate(req.params.id, updatePayload, {
     new: true,
   });
 

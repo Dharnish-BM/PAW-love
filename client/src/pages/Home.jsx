@@ -257,18 +257,6 @@ export default function Home() {
               <h3>Forever Families</h3>
               <p>We ensure every adoption leads to a lifetime of happiness and companionship.</p>
             </motion.div>
-            <motion.div 
-              className="feature-card"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              viewport={{ once: true }}
-              whileHover={{ y: -8, scale: 1.02 }}
-            >
-              <div className="feature-icon">🌟</div>
-              <h3>Trusted Shelters</h3>
-              <p>Partnering with verified shelters and rescue organizations across the country.</p>
-            </motion.div>
           </div>
         </div>
       </section>

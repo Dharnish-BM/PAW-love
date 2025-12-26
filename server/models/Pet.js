@@ -10,7 +10,10 @@ const petSchema = new mongoose.Schema({
   location: { type: String },
   description: { type: String },
   medicalHistory: { type: String },
-  images: [{ type: String }], // array of image URLs
+  images: {
+    type: [String],
+    default: [],
+  }, // array of image URLs / data URIs
   isAdopted: { type: Boolean, default: false },
   // Listing type and pricing
   listingType: { 
@@ -33,7 +36,15 @@ const petSchema = new mongoose.Schema({
     required: function() { return this.listingType === 'sale'; }
   },
   postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-}, { timestamps: true });
+}, { 
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
+
+petSchema.virtual('imageUrls').get(function () {
+  return this.images || [];
+});
 
 const Pet = mongoose.model("Pet", petSchema);
 export default Pet;
